@@ -1,0 +1,9 @@
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\bin\Debug\mz_disaggregationtool_v0.exe
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\bin\Debug\mz_disaggregationtool_v0.pdb
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\mz_disaggregationtool_v0.Properties.Resources.resources
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\mz_disaggregationtool_v0.exe
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\mz_disaggregationtool_v0.pdb
+C:\Projects\STEP Transferability\Tools\DisaggregationTool\code\mz_disaggregationtool_v0\mz_disaggregationtool_v0\obj\x86\Debug\mz_disaggregationtool_v0.frmInput.resources
