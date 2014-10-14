@@ -452,7 +452,7 @@ namespace DisaggregationTool
         {
             NumParcel = File.ReadAllLines(fileName).Length - 1;
 
-            NumLUseVars_P_Base = NumDaySimSector + 1; // hh,stugrd,stuhgh,stuuni,empedu,empfoo,empgov,empind,empmed,empofc,empret,empsvc,empoth,emptot=14
+            NumLUseVars_P_Base = NumDaySimSector + 1; // empedu,empfoo,empgov,empind,empmed,empofc,empret,empsvc,empoth,emptot=10
             Area_P_Base = new double[NumParcel];
             LUse_P_Base = new double[NumParcel, NumLUseVars_P_Base];
             ParcelId_P_Base = new long[NumParcel];
@@ -1032,6 +1032,10 @@ namespace DisaggregationTool
             double[] DiffGQParcel;
             double[] GQPop_P_Forecast;
             double[] DiffGQTaz;
+            int[] HH_P_Forecast_Round;
+            int[,] LUse_P_Forecast_Round;
+            int[,] K12Enroll_P_Forecast_Round;
+            int[] HiEduc_P_Forecast_Round;
             
             string OutFolder = Path.GetDirectoryName(ParcelForecastFileName);
 
@@ -1044,7 +1048,7 @@ namespace DisaggregationTool
             CalculateTazDiff.Calculate(out DiffHHTaz, out DiffGQTaz, out DiffLUseTaz, out DiffK12EnrollTaz, out DiffHiEducTaz, HH_T_Base, GQPop_T_Base, LUse_T_Base, K12Enroll_T_Base, HiEduc_T_Base,
                 DwellUnits_T_Forecast, GQPop_T_Forecast, LUse_T_Forecast, K12Enroll_T_Forecast, HiEduc_T_Forecast, TazIndBaseDictionary, TazIndForecastDictionary, NumLUseVars_P_Base, NumTaz);
 
-            //3. Calculate sum at DRI and TAZ level
+            //3. Calculate sum at DRI level
             CalculateSum.Calculate(out SumLUseDri, out SumAreaDri, ParcelDriCorrespondence, NumTaz, NumLUseVars_P_Base, 
                 LUse_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary);
 
@@ -1069,11 +1073,15 @@ namespace DisaggregationTool
                 DiffHiEducParcel, NumLUseVars_P_Base, ShareK12EnrollTaz, ShareHiEducTaz, TazId_P_Base);
 
             //7.1 Allocate HH change to parcels
-            AllocateChangeToParcels.AllocateHH(out HH_P_Forecast,DiffHHTaz, HH_P_Base, DUDensity_T_Base,NumVacantParcelsInTaz, NumVacantParcelsInDri,
+            AllocateChangeToParcels.AllocateHH(out HH_P_Forecast,DiffHHTaz, HH_P_Base, DUDensity_T_Base, NumVacantParcelsInTaz, NumVacantParcelsInDri,
                 NumParcelsInTaz, ParcelVacantCorrespondence, TazId_P_Base,ShareHHTaz);
 
+            // 8.0 Intergerize values
+            IntegeriseValues.Calculate(out LUse_P_Forecast_Round, out K12Enroll_P_Forecast_Round, out HiEduc_P_Forecast_Round, HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast,
+                K12Enroll_P_Forecast, HiEduc_P_Forecast, ParcelVacantCorrespondence, NumLUseVars_P_Base);
+
             //8. Write output
-            WriteMultiYearOutput.Write(HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast, K12Enroll_P_Forecast, HiEduc_P_Forecast, ParcelId_P_Base, XCoord_P_Base, YCoord_P_Base, 
+            WriteMultiYearOutput.Write(HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast_Round, K12Enroll_P_Forecast_Round, HiEduc_P_Forecast_Round, ParcelId_P_Base, XCoord_P_Base, YCoord_P_Base, 
                 Area_P_Base, TazId_P_Base, ParcelForecastFileName, ParcelDriCorrespondence);
 
         }

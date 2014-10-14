@@ -8,13 +8,19 @@ namespace DisaggregationTool
 {
     class WriteMultiYearOutput
     {
-        public static void Write(int[] hh_P, double[] gq_P, double[,] lUse_P, double[,] k12Enroll_P, double[] hiEduc_P, long[] parcelId, double[] xCoord, double[] yCoord, 
+        public static void Write(int[] hh_P, double[] gq_P, int[,] lUse_P, int[,] k12Enroll_P, int[] hiEduc_P, long[] parcelId, double[] xCoord, double[] yCoord, 
             double[] area, int[] tazId, string outputFileName, int[,] driCorrespondence)
         {
 
             //int numSchVars = 3;
             int numParcel = lUse_P.GetLength(0);
             double zeroValue = 0;
+
+            //double leftOver_HH = 0;
+            //double[] leftOver_enroll = new double[3];
+            //double leftOver_stugrd = 0;
+            //double leftOver_stuhgh = 0;
+            //double leftOver_stuuni = 0;
 
             StreamWriter sw = new StreamWriter(File.Create(outputFileName));
 
@@ -36,16 +42,16 @@ namespace DisaggregationTool
                 // write K12 school data
                 for (int enrl = 0; enrl <2; enrl++)
                 {
-                    sw.Write("," + Math.Round(k12Enroll_P[p, enrl]).ToString());
+                    sw.Write("," + k12Enroll_P[p, enrl].ToString());
                 }
 
                 // write university enrollment
-                sw.Write("," +  Math.Round(hiEduc_P[p]).ToString());
+                sw.Write("," +  hiEduc_P[p].ToString());
 
                 // write employment data in the required format
                 for (int sector = 0; sector < 10; sector++)
                 {
-                    sw.Write("," +  Math.Round(lUse_P[p,sector]).ToString());
+                    sw.Write("," +  lUse_P[p,sector].ToString());
                 }
 
                 // write 0 for next 4 columns - for parking columns

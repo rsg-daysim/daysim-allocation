@@ -96,6 +96,7 @@
     <Compile Include="FrmSic.Designer.cs">
       <DependentUpon>FrmSic.cs</DependentUpon>
     </Compile>
+    <Compile Include="IntegeriseValues.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SharesForParcelsInDri.cs" />
