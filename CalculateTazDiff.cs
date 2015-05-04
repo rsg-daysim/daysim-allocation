@@ -9,8 +9,8 @@ namespace DisaggregationTool
     class CalculateTazDiff
     {
         public static void Calculate(out int[] diffHHTaz, out double[] diffGQTaz, out double[,] diffLuseTaz, out int[] diffK12EnrollTaz, out int[] diffHiEducTaz, int[] hh_Base, 
-            double[] gq_T_Base, double[,] lUse_T_Base, int[,] k12Enroll_T_Base, int[] hiEduc_T_Base, int[,] hh_Forecast, double[] gq_T_Forecast, double[,] lUse_T_Forecst, int[] k12Enroll_T_Forecast, 
-            int[] hiEduc_T_Forecast, Dictionary<int, int> tazIndBaseDictionary, Dictionary<int, int> tazIndForecasteDictionary, int numLUseVars, int numTaz)
+            double[] gq_T_Base, double[,] lUse_T_Base, int[,] k12Enroll_T_Base, int[] hiEduc_T_Base, int[,] hh_Forecast, double[] gq_T_Forecast, double[,] lUse_T_Forecst, int[] k12Enroll_T_Forecast,
+            int[] hiEduc_T_Forecast, Dictionary<int, int> tazIndBaseDictionary, Dictionary<int, int> tazIndForecasteDictionary, int numLUseVars, int numTaz, string outFolder)
         {
             //int numTaz = lUse_T_Forecst.Length;
             diffHHTaz = new int[numTaz];
@@ -19,7 +19,7 @@ namespace DisaggregationTool
             diffK12EnrollTaz = new int[numTaz];
             diffHiEducTaz = new int[numTaz];
 
-            string outputFileName = "C:\\Projects\\FDOT Allocation Tool\\inputs\\Input Data\\DiffTaz.csv";
+            string outputFileName = outFolder + "\\DiffTaz.csv";
             StreamWriter sw = new StreamWriter(File.Create(outputFileName));
             string header = "TAZ,HH,stuk12,stuuni";
             sw.Write(header);

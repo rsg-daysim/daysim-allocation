@@ -8,7 +8,7 @@ namespace DisaggregationTool
 {
     class WriteMultiYearOutput
     {
-        public static void Write(int[] hh_P, double[] gq_P, int[,] lUse_P, int[,] k12Enroll_P, int[] hiEduc_P, long[] parcelId, double[] xCoord, double[] yCoord, 
+        public static void Write(int[] hh_P, double[] gq_P, int[,] lUse_P, int[,] k12Enroll_P, int[] hiEduc_P, long[] parcelId, double[] xCoord, double[] yCoord,
             double[] area, int[] tazId, string outputFileName, int[,] driCorrespondence)
         {
 

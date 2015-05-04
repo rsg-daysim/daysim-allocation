@@ -102,6 +102,7 @@
     <Compile Include="SharesForParcelsInDri.cs" />
     <Compile Include="SharesForParcelsInTaz.cs" />
     <Compile Include="SicToNaics.cs" />
+    <Compile Include="SortParcels.cs" />
     <Compile Include="SumAreaByBlock.cs" />
     <Compile Include="ValidateEmploymentCodes.cs" />
     <Compile Include="WriteMultiYearOutput.cs" />
