@@ -44,26 +44,28 @@
             this.lblTaz = new System.Windows.Forms.Label();
             this.txtTazFile = new System.Windows.Forms.TextBox();
             this.clbEmplCats = new System.Windows.Forms.CheckedListBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblSelectEmplCats = new System.Windows.Forms.Label();
             this.btnBrowseTaz = new System.Windows.Forms.Button();
             this.gbInputs = new System.Windows.Forms.GroupBox();
+            this.cbTazForecastHeader1 = new System.Windows.Forms.CheckBox();
             this.cbSectorCorrespondenceHeader = new System.Windows.Forms.CheckBox();
+            this.btnBrowseTazForecast1 = new System.Windows.Forms.Button();
             this.btnBrowseSectorCorrespondence = new System.Windows.Forms.Button();
             this.txtSectorCorrespondenceFile = new System.Windows.Forms.TextBox();
             this.lblSectorCorrespondenceFile = new System.Windows.Forms.Label();
             this.cbCorrespondenceHeader = new System.Windows.Forms.CheckBox();
+            this.txtTazForecastFile = new System.Windows.Forms.TextBox();
+            this.lblTazForecastFile = new System.Windows.Forms.Label();
             this.btnBrowseCorrespondence = new System.Windows.Forms.Button();
+            this.btnBrowseTazForecast = new System.Windows.Forms.Button();
             this.txtDriCorrespondenceFile = new System.Windows.Forms.TextBox();
+            this.cbTazForecastHeader = new System.Windows.Forms.CheckBox();
             this.lblDriCorrespondenceFile = new System.Windows.Forms.Label();
             this.cbParcelBaseHeader = new System.Windows.Forms.CheckBox();
-            this.cbTazForecastHeader = new System.Windows.Forms.CheckBox();
             this.btnBrowseParcelBase = new System.Windows.Forms.Button();
-            this.btnBrowseTazForecast = new System.Windows.Forms.Button();
             this.txtParcelBaseFile = new System.Windows.Forms.TextBox();
-            this.txtTazForecastFile = new System.Windows.Forms.TextBox();
             this.lblParcelBaseFile = new System.Windows.Forms.Label();
-            this.lblTazForecastFile = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
+            this.lblEmplClassSys = new System.Windows.Forms.Label();
             this.rdbSic = new System.Windows.Forms.RadioButton();
             this.rdbNaics = new System.Windows.Forms.RadioButton();
             this.cbTazHeader = new System.Windows.Forms.CheckBox();
@@ -81,10 +83,8 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.rdbMultiYears = new System.Windows.Forms.RadioButton();
             this.rdbOneYear = new System.Windows.Forms.RadioButton();
-            this.cbTazForecastHeader1 = new System.Windows.Forms.CheckBox();
-            this.btnBrowseTazForecast1 = new System.Windows.Forms.Button();
             this.txtTazForecastFile1 = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
+            this.lblForecastFile1 = new System.Windows.Forms.Label();
             this.gbInputs.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.gbReadXml.SuspendLayout();
@@ -104,6 +104,7 @@
             // lblBlock
             // 
             this.lblBlock.AutoSize = true;
+            this.lblBlock.Enabled = false;
             this.lblBlock.Location = new System.Drawing.Point(57, 278);
             this.lblBlock.Name = "lblBlock";
             this.lblBlock.Size = new System.Drawing.Size(53, 13);
@@ -113,6 +114,7 @@
             // lblMZ
             // 
             this.lblMZ.AutoSize = true;
+            this.lblMZ.Enabled = false;
             this.lblMZ.Location = new System.Drawing.Point(57, 313);
             this.lblMZ.Name = "lblMZ";
             this.lblMZ.Size = new System.Drawing.Size(128, 13);
@@ -122,6 +124,7 @@
             // lblSchool
             // 
             this.lblSchool.AutoSize = true;
+            this.lblSchool.Enabled = false;
             this.lblSchool.Location = new System.Drawing.Point(57, 354);
             this.lblSchool.Name = "lblSchool";
             this.lblSchool.Size = new System.Drawing.Size(59, 13);
@@ -131,6 +134,7 @@
             // lblOutput
             // 
             this.lblOutput.AutoSize = true;
+            this.lblOutput.Enabled = false;
             this.lblOutput.Location = new System.Drawing.Point(61, 79);
             this.lblOutput.Name = "lblOutput";
             this.lblOutput.Size = new System.Drawing.Size(58, 13);
@@ -139,27 +143,31 @@
             // 
             // txtBlockFile
             // 
-            this.txtBlockFile.Location = new System.Drawing.Point(218, 271);
+            this.txtBlockFile.Enabled = false;
+            this.txtBlockFile.Location = new System.Drawing.Point(220, 271);
             this.txtBlockFile.Name = "txtBlockFile";
             this.txtBlockFile.Size = new System.Drawing.Size(340, 20);
             this.txtBlockFile.TabIndex = 7;
             // 
             // txtMzFile
             // 
-            this.txtMzFile.Location = new System.Drawing.Point(218, 309);
+            this.txtMzFile.Enabled = false;
+            this.txtMzFile.Location = new System.Drawing.Point(220, 309);
             this.txtMzFile.Name = "txtMzFile";
             this.txtMzFile.Size = new System.Drawing.Size(340, 20);
             this.txtMzFile.TabIndex = 8;
             // 
             // txtSchoolFile
             // 
-            this.txtSchoolFile.Location = new System.Drawing.Point(218, 346);
+            this.txtSchoolFile.Enabled = false;
+            this.txtSchoolFile.Location = new System.Drawing.Point(220, 346);
             this.txtSchoolFile.Name = "txtSchoolFile";
             this.txtSchoolFile.Size = new System.Drawing.Size(340, 20);
             this.txtSchoolFile.TabIndex = 9;
             // 
             // txtOutputFile
             // 
+            this.txtOutputFile.Enabled = false;
             this.txtOutputFile.Location = new System.Drawing.Point(222, 78);
             this.txtOutputFile.Name = "txtOutputFile";
             this.txtOutputFile.Size = new System.Drawing.Size(340, 20);
@@ -167,7 +175,8 @@
             // 
             // btnBrowseBlocks
             // 
-            this.btnBrowseBlocks.Location = new System.Drawing.Point(580, 270);
+            this.btnBrowseBlocks.Enabled = false;
+            this.btnBrowseBlocks.Location = new System.Drawing.Point(582, 270);
             this.btnBrowseBlocks.Name = "btnBrowseBlocks";
             this.btnBrowseBlocks.Size = new System.Drawing.Size(24, 19);
             this.btnBrowseBlocks.TabIndex = 13;
@@ -177,7 +186,8 @@
             // 
             // btnBrowseMZ
             // 
-            this.btnBrowseMZ.Location = new System.Drawing.Point(580, 309);
+            this.btnBrowseMZ.Enabled = false;
+            this.btnBrowseMZ.Location = new System.Drawing.Point(582, 306);
             this.btnBrowseMZ.Name = "btnBrowseMZ";
             this.btnBrowseMZ.Size = new System.Drawing.Size(24, 19);
             this.btnBrowseMZ.TabIndex = 14;
@@ -187,7 +197,8 @@
             // 
             // btnBrowseSchool
             // 
-            this.btnBrowseSchool.Location = new System.Drawing.Point(580, 345);
+            this.btnBrowseSchool.Enabled = false;
+            this.btnBrowseSchool.Location = new System.Drawing.Point(582, 342);
             this.btnBrowseSchool.Name = "btnBrowseSchool";
             this.btnBrowseSchool.Size = new System.Drawing.Size(24, 19);
             this.btnBrowseSchool.TabIndex = 15;
@@ -197,6 +208,7 @@
             // 
             // btnBrowseOutput
             // 
+            this.btnBrowseOutput.Enabled = false;
             this.btnBrowseOutput.Location = new System.Drawing.Point(584, 78);
             this.btnBrowseOutput.Name = "btnBrowseOutput";
             this.btnBrowseOutput.Size = new System.Drawing.Size(24, 19);
@@ -208,6 +220,7 @@
             // lblTaz
             // 
             this.lblTaz.AutoSize = true;
+            this.lblTaz.Enabled = false;
             this.lblTaz.Location = new System.Drawing.Point(144, 22);
             this.lblTaz.Name = "lblTaz";
             this.lblTaz.Size = new System.Drawing.Size(47, 13);
@@ -216,6 +229,7 @@
             // 
             // txtTazFile
             // 
+            this.txtTazFile.Enabled = false;
             this.txtTazFile.Location = new System.Drawing.Point(221, 15);
             this.txtTazFile.Name = "txtTazFile";
             this.txtTazFile.Size = new System.Drawing.Size(341, 20);
@@ -223,24 +237,28 @@
             // 
             // clbEmplCats
             // 
+            this.clbEmplCats.BackColor = System.Drawing.SystemColors.Menu;
             this.clbEmplCats.Enabled = false;
+            this.clbEmplCats.ForeColor = System.Drawing.SystemColors.WindowText;
             this.clbEmplCats.FormattingEnabled = true;
             this.clbEmplCats.Location = new System.Drawing.Point(221, 74);
             this.clbEmplCats.Name = "clbEmplCats";
             this.clbEmplCats.Size = new System.Drawing.Size(337, 139);
             this.clbEmplCats.TabIndex = 11;
             // 
-            // label1
+            // lblSelectEmplCats
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(144, 49);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 13);
-            this.label1.TabIndex = 12;
-            this.label1.Text = "Select Employment Categories";
+            this.lblSelectEmplCats.AutoSize = true;
+            this.lblSelectEmplCats.Enabled = false;
+            this.lblSelectEmplCats.Location = new System.Drawing.Point(144, 49);
+            this.lblSelectEmplCats.Name = "lblSelectEmplCats";
+            this.lblSelectEmplCats.Size = new System.Drawing.Size(150, 13);
+            this.lblSelectEmplCats.TabIndex = 12;
+            this.lblSelectEmplCats.Text = "Select Employment Categories";
             // 
             // btnBrowseTaz
             // 
+            this.btnBrowseTaz.Enabled = false;
             this.btnBrowseTaz.Location = new System.Drawing.Point(583, 15);
             this.btnBrowseTaz.Name = "btnBrowseTaz";
             this.btnBrowseTaz.Size = new System.Drawing.Size(24, 19);
@@ -251,23 +269,25 @@
             // 
             // gbInputs
             // 
+            this.gbInputs.Controls.Add(this.cbTazForecastHeader1);
             this.gbInputs.Controls.Add(this.cbSectorCorrespondenceHeader);
+            this.gbInputs.Controls.Add(this.btnBrowseTazForecast1);
             this.gbInputs.Controls.Add(this.btnBrowseSectorCorrespondence);
             this.gbInputs.Controls.Add(this.txtSectorCorrespondenceFile);
             this.gbInputs.Controls.Add(this.lblSectorCorrespondenceFile);
             this.gbInputs.Controls.Add(this.cbCorrespondenceHeader);
+            this.gbInputs.Controls.Add(this.txtTazForecastFile);
+            this.gbInputs.Controls.Add(this.lblTazForecastFile);
             this.gbInputs.Controls.Add(this.btnBrowseCorrespondence);
+            this.gbInputs.Controls.Add(this.btnBrowseTazForecast);
             this.gbInputs.Controls.Add(this.txtDriCorrespondenceFile);
+            this.gbInputs.Controls.Add(this.cbTazForecastHeader);
             this.gbInputs.Controls.Add(this.lblDriCorrespondenceFile);
             this.gbInputs.Controls.Add(this.cbParcelBaseHeader);
-            this.gbInputs.Controls.Add(this.cbTazForecastHeader);
             this.gbInputs.Controls.Add(this.btnBrowseParcelBase);
-            this.gbInputs.Controls.Add(this.btnBrowseTazForecast);
             this.gbInputs.Controls.Add(this.txtParcelBaseFile);
-            this.gbInputs.Controls.Add(this.txtTazForecastFile);
             this.gbInputs.Controls.Add(this.lblParcelBaseFile);
-            this.gbInputs.Controls.Add(this.lblTazForecastFile);
-            this.gbInputs.Controls.Add(this.label2);
+            this.gbInputs.Controls.Add(this.lblEmplClassSys);
             this.gbInputs.Controls.Add(this.rdbSic);
             this.gbInputs.Controls.Add(this.rdbNaics);
             this.gbInputs.Controls.Add(this.cbTazHeader);
@@ -285,7 +305,7 @@
             this.gbInputs.Controls.Add(this.lblBlock);
             this.gbInputs.Controls.Add(this.btnEmplCatsOk);
             this.gbInputs.Controls.Add(this.btnBrowseTaz);
-            this.gbInputs.Controls.Add(this.label1);
+            this.gbInputs.Controls.Add(this.lblSelectEmplCats);
             this.gbInputs.Controls.Add(this.clbEmplCats);
             this.gbInputs.Controls.Add(this.txtTazFile);
             this.gbInputs.Controls.Add(this.lblTaz);
@@ -296,15 +316,35 @@
             this.gbInputs.TabStop = false;
             this.gbInputs.Text = "INPUT";
             // 
+            // cbTazForecastHeader1
+            // 
+            this.cbTazForecastHeader1.AutoSize = true;
+            this.cbTazForecastHeader1.Location = new System.Drawing.Point(622, 380);
+            this.cbTazForecastHeader1.Name = "cbTazForecastHeader1";
+            this.cbTazForecastHeader1.Size = new System.Drawing.Size(61, 17);
+            this.cbTazForecastHeader1.TabIndex = 68;
+            this.cbTazForecastHeader1.Text = "Header";
+            this.cbTazForecastHeader1.UseVisualStyleBackColor = true;
+            // 
             // cbSectorCorrespondenceHeader
             // 
             this.cbSectorCorrespondenceHeader.AutoSize = true;
-            this.cbSectorCorrespondenceHeader.Location = new System.Drawing.Point(633, 522);
+            this.cbSectorCorrespondenceHeader.Location = new System.Drawing.Point(622, 520);
             this.cbSectorCorrespondenceHeader.Name = "cbSectorCorrespondenceHeader";
             this.cbSectorCorrespondenceHeader.Size = new System.Drawing.Size(61, 17);
             this.cbSectorCorrespondenceHeader.TabIndex = 73;
             this.cbSectorCorrespondenceHeader.Text = "Header";
             this.cbSectorCorrespondenceHeader.UseVisualStyleBackColor = true;
+            // 
+            // btnBrowseTazForecast1
+            // 
+            this.btnBrowseTazForecast1.Location = new System.Drawing.Point(582, 378);
+            this.btnBrowseTazForecast1.Name = "btnBrowseTazForecast1";
+            this.btnBrowseTazForecast1.Size = new System.Drawing.Size(24, 19);
+            this.btnBrowseTazForecast1.TabIndex = 67;
+            this.btnBrowseTazForecast1.Text = "....";
+            this.btnBrowseTazForecast1.UseVisualStyleBackColor = true;
+            this.btnBrowseTazForecast1.Click += new System.EventHandler(this.btnBrowseTazForecast1_Click);
             // 
             // btnBrowseSectorCorrespondence
             // 
@@ -335,16 +375,32 @@
             // cbCorrespondenceHeader
             // 
             this.cbCorrespondenceHeader.AutoSize = true;
-            this.cbCorrespondenceHeader.Location = new System.Drawing.Point(631, 485);
+            this.cbCorrespondenceHeader.Location = new System.Drawing.Point(622, 485);
             this.cbCorrespondenceHeader.Name = "cbCorrespondenceHeader";
             this.cbCorrespondenceHeader.Size = new System.Drawing.Size(61, 17);
             this.cbCorrespondenceHeader.TabIndex = 69;
             this.cbCorrespondenceHeader.Text = "Header";
             this.cbCorrespondenceHeader.UseVisualStyleBackColor = true;
             // 
+            // txtTazForecastFile
+            // 
+            this.txtTazForecastFile.Location = new System.Drawing.Point(220, 414);
+            this.txtTazForecastFile.Name = "txtTazForecastFile";
+            this.txtTazForecastFile.Size = new System.Drawing.Size(340, 20);
+            this.txtTazForecastFile.TabIndex = 58;
+            // 
+            // lblTazForecastFile
+            // 
+            this.lblTazForecastFile.AutoSize = true;
+            this.lblTazForecastFile.Location = new System.Drawing.Point(56, 418);
+            this.lblTazForecastFile.Name = "lblTazForecastFile";
+            this.lblTazForecastFile.Size = new System.Drawing.Size(125, 13);
+            this.lblTazForecastFile.TabIndex = 55;
+            this.lblTazForecastFile.Text = "Forecast Year TAZ File 2";
+            // 
             // btnBrowseCorrespondence
             // 
-            this.btnBrowseCorrespondence.Location = new System.Drawing.Point(580, 485);
+            this.btnBrowseCorrespondence.Location = new System.Drawing.Point(582, 486);
             this.btnBrowseCorrespondence.Name = "btnBrowseCorrespondence";
             this.btnBrowseCorrespondence.Size = new System.Drawing.Size(24, 19);
             this.btnBrowseCorrespondence.TabIndex = 68;
@@ -352,12 +408,32 @@
             this.btnBrowseCorrespondence.UseVisualStyleBackColor = true;
             this.btnBrowseCorrespondence.Click += new System.EventHandler(this.btnBrowseCorrespondence_Click);
             // 
+            // btnBrowseTazForecast
+            // 
+            this.btnBrowseTazForecast.Location = new System.Drawing.Point(582, 414);
+            this.btnBrowseTazForecast.Name = "btnBrowseTazForecast";
+            this.btnBrowseTazForecast.Size = new System.Drawing.Size(24, 19);
+            this.btnBrowseTazForecast.TabIndex = 61;
+            this.btnBrowseTazForecast.Text = "....";
+            this.btnBrowseTazForecast.UseVisualStyleBackColor = true;
+            this.btnBrowseTazForecast.Click += new System.EventHandler(this.btnBrowseTazForecast_Click);
+            // 
             // txtDriCorrespondenceFile
             // 
-            this.txtDriCorrespondenceFile.Location = new System.Drawing.Point(218, 486);
+            this.txtDriCorrespondenceFile.Location = new System.Drawing.Point(220, 486);
             this.txtDriCorrespondenceFile.Name = "txtDriCorrespondenceFile";
             this.txtDriCorrespondenceFile.Size = new System.Drawing.Size(340, 20);
             this.txtDriCorrespondenceFile.TabIndex = 67;
+            // 
+            // cbTazForecastHeader
+            // 
+            this.cbTazForecastHeader.AutoSize = true;
+            this.cbTazForecastHeader.Location = new System.Drawing.Point(622, 415);
+            this.cbTazForecastHeader.Name = "cbTazForecastHeader";
+            this.cbTazForecastHeader.Size = new System.Drawing.Size(61, 17);
+            this.cbTazForecastHeader.TabIndex = 64;
+            this.cbTazForecastHeader.Text = "Header";
+            this.cbTazForecastHeader.UseVisualStyleBackColor = true;
             // 
             // lblDriCorrespondenceFile
             // 
@@ -371,26 +447,16 @@
             // cbParcelBaseHeader
             // 
             this.cbParcelBaseHeader.AutoSize = true;
-            this.cbParcelBaseHeader.Location = new System.Drawing.Point(631, 446);
+            this.cbParcelBaseHeader.Location = new System.Drawing.Point(622, 450);
             this.cbParcelBaseHeader.Name = "cbParcelBaseHeader";
             this.cbParcelBaseHeader.Size = new System.Drawing.Size(61, 17);
             this.cbParcelBaseHeader.TabIndex = 65;
             this.cbParcelBaseHeader.Text = "Header";
             this.cbParcelBaseHeader.UseVisualStyleBackColor = true;
             // 
-            // cbTazForecastHeader
-            // 
-            this.cbTazForecastHeader.AutoSize = true;
-            this.cbTazForecastHeader.Location = new System.Drawing.Point(631, 380);
-            this.cbTazForecastHeader.Name = "cbTazForecastHeader";
-            this.cbTazForecastHeader.Size = new System.Drawing.Size(61, 17);
-            this.cbTazForecastHeader.TabIndex = 64;
-            this.cbTazForecastHeader.Text = "Header";
-            this.cbTazForecastHeader.UseVisualStyleBackColor = true;
-            // 
             // btnBrowseParcelBase
             // 
-            this.btnBrowseParcelBase.Location = new System.Drawing.Point(580, 446);
+            this.btnBrowseParcelBase.Location = new System.Drawing.Point(582, 450);
             this.btnBrowseParcelBase.Name = "btnBrowseParcelBase";
             this.btnBrowseParcelBase.Size = new System.Drawing.Size(24, 19);
             this.btnBrowseParcelBase.TabIndex = 62;
@@ -398,29 +464,12 @@
             this.btnBrowseParcelBase.UseVisualStyleBackColor = true;
             this.btnBrowseParcelBase.Click += new System.EventHandler(this.btnBrowseParcelBase_Click);
             // 
-            // btnBrowseTazForecast
-            // 
-            this.btnBrowseTazForecast.Location = new System.Drawing.Point(580, 380);
-            this.btnBrowseTazForecast.Name = "btnBrowseTazForecast";
-            this.btnBrowseTazForecast.Size = new System.Drawing.Size(24, 19);
-            this.btnBrowseTazForecast.TabIndex = 61;
-            this.btnBrowseTazForecast.Text = "....";
-            this.btnBrowseTazForecast.UseVisualStyleBackColor = true;
-            this.btnBrowseTazForecast.Click += new System.EventHandler(this.btnBrowseTazForecast_Click);
-            // 
             // txtParcelBaseFile
             // 
-            this.txtParcelBaseFile.Location = new System.Drawing.Point(218, 447);
+            this.txtParcelBaseFile.Location = new System.Drawing.Point(220, 447);
             this.txtParcelBaseFile.Name = "txtParcelBaseFile";
             this.txtParcelBaseFile.Size = new System.Drawing.Size(340, 20);
             this.txtParcelBaseFile.TabIndex = 59;
-            // 
-            // txtTazForecastFile
-            // 
-            this.txtTazForecastFile.Location = new System.Drawing.Point(218, 380);
-            this.txtTazForecastFile.Name = "txtTazForecastFile";
-            this.txtTazForecastFile.Size = new System.Drawing.Size(340, 20);
-            this.txtTazForecastFile.TabIndex = 58;
             // 
             // lblParcelBaseFile
             // 
@@ -431,27 +480,20 @@
             this.lblParcelBaseFile.TabIndex = 56;
             this.lblParcelBaseFile.Text = "Base Year Parcel File";
             // 
-            // lblTazForecastFile
+            // lblEmplClassSys
             // 
-            this.lblTazForecastFile.AutoSize = true;
-            this.lblTazForecastFile.Location = new System.Drawing.Point(57, 384);
-            this.lblTazForecastFile.Name = "lblTazForecastFile";
-            this.lblTazForecastFile.Size = new System.Drawing.Size(125, 13);
-            this.lblTazForecastFile.TabIndex = 55;
-            this.lblTazForecastFile.Text = "Forecast Year TAZ File 2";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(599, 106);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(165, 13);
-            this.label2.TabIndex = 53;
-            this.label2.Text = "Employment Classification System";
+            this.lblEmplClassSys.AutoSize = true;
+            this.lblEmplClassSys.Enabled = false;
+            this.lblEmplClassSys.Location = new System.Drawing.Point(599, 106);
+            this.lblEmplClassSys.Name = "lblEmplClassSys";
+            this.lblEmplClassSys.Size = new System.Drawing.Size(165, 13);
+            this.lblEmplClassSys.TabIndex = 53;
+            this.lblEmplClassSys.Text = "Employment Classification System";
             // 
             // rdbSic
             // 
             this.rdbSic.AutoSize = true;
+            this.rdbSic.Enabled = false;
             this.rdbSic.Location = new System.Drawing.Point(624, 157);
             this.rdbSic.Name = "rdbSic";
             this.rdbSic.Size = new System.Drawing.Size(42, 17);
@@ -464,6 +506,7 @@
             // 
             this.rdbNaics.AutoSize = true;
             this.rdbNaics.Checked = true;
+            this.rdbNaics.Enabled = false;
             this.rdbNaics.Location = new System.Drawing.Point(624, 133);
             this.rdbNaics.Name = "rdbNaics";
             this.rdbNaics.Size = new System.Drawing.Size(57, 17);
@@ -475,6 +518,9 @@
             // cbTazHeader
             // 
             this.cbTazHeader.AutoSize = true;
+            this.cbTazHeader.Checked = true;
+            this.cbTazHeader.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbTazHeader.Enabled = false;
             this.cbTazHeader.Location = new System.Drawing.Point(635, 17);
             this.cbTazHeader.Name = "cbTazHeader";
             this.cbTazHeader.Size = new System.Drawing.Size(61, 17);
@@ -485,7 +531,8 @@
             // cbSchoolHeader
             // 
             this.cbSchoolHeader.AutoSize = true;
-            this.cbSchoolHeader.Location = new System.Drawing.Point(631, 345);
+            this.cbSchoolHeader.Enabled = false;
+            this.cbSchoolHeader.Location = new System.Drawing.Point(622, 345);
             this.cbSchoolHeader.Name = "cbSchoolHeader";
             this.cbSchoolHeader.Size = new System.Drawing.Size(61, 17);
             this.cbSchoolHeader.TabIndex = 19;
@@ -495,7 +542,8 @@
             // cbMZHeader
             // 
             this.cbMZHeader.AutoSize = true;
-            this.cbMZHeader.Location = new System.Drawing.Point(631, 309);
+            this.cbMZHeader.Enabled = false;
+            this.cbMZHeader.Location = new System.Drawing.Point(622, 310);
             this.cbMZHeader.Name = "cbMZHeader";
             this.cbMZHeader.Size = new System.Drawing.Size(61, 17);
             this.cbMZHeader.TabIndex = 18;
@@ -505,7 +553,8 @@
             // cbBlockHeader
             // 
             this.cbBlockHeader.AutoSize = true;
-            this.cbBlockHeader.Location = new System.Drawing.Point(631, 271);
+            this.cbBlockHeader.Enabled = false;
+            this.cbBlockHeader.Location = new System.Drawing.Point(622, 275);
             this.cbBlockHeader.Name = "cbBlockHeader";
             this.cbBlockHeader.Size = new System.Drawing.Size(61, 17);
             this.cbBlockHeader.TabIndex = 17;
@@ -525,6 +574,7 @@
             // 
             // btnReadXml
             // 
+            this.btnReadXml.Enabled = false;
             this.btnReadXml.Location = new System.Drawing.Point(60, 19);
             this.btnReadXml.Name = "btnReadXml";
             this.btnReadXml.Size = new System.Drawing.Size(155, 42);
@@ -577,6 +627,7 @@
             // 
             // btnOutputForm
             // 
+            this.btnOutputForm.Enabled = false;
             this.btnOutputForm.Location = new System.Drawing.Point(308, 20);
             this.btnOutputForm.Name = "btnOutputForm";
             this.btnOutputForm.Size = new System.Drawing.Size(167, 42);
@@ -588,6 +639,7 @@
             // gbReadXml
             // 
             this.gbReadXml.Controls.Add(this.btnReadXml);
+            this.gbReadXml.Enabled = false;
             this.gbReadXml.Location = new System.Drawing.Point(488, 24);
             this.gbReadXml.Name = "gbReadXml";
             this.gbReadXml.Size = new System.Drawing.Size(254, 71);
@@ -612,68 +664,46 @@
             this.rdbMultiYears.Checked = true;
             this.rdbMultiYears.Location = new System.Drawing.Point(180, 34);
             this.rdbMultiYears.Name = "rdbMultiYears";
-            this.rdbMultiYears.Size = new System.Drawing.Size(77, 17);
+            this.rdbMultiYears.Size = new System.Drawing.Size(92, 17);
             this.rdbMultiYears.TabIndex = 1;
             this.rdbMultiYears.TabStop = true;
-            this.rdbMultiYears.Text = "Multi Years";
+            this.rdbMultiYears.Text = "Alternate Year";
             this.rdbMultiYears.UseVisualStyleBackColor = true;
+            this.rdbMultiYears.CheckedChanged += new System.EventHandler(this.rdbMultiYears_CheckedChanged);
             // 
             // rdbOneYear
             // 
             this.rdbOneYear.AutoSize = true;
             this.rdbOneYear.Location = new System.Drawing.Point(44, 34);
             this.rdbOneYear.Name = "rdbOneYear";
-            this.rdbOneYear.Size = new System.Drawing.Size(70, 17);
+            this.rdbOneYear.Size = new System.Drawing.Size(74, 17);
             this.rdbOneYear.TabIndex = 0;
-            this.rdbOneYear.TabStop = true;
-            this.rdbOneYear.Text = "One Year";
+            this.rdbOneYear.Text = "Base Year";
             this.rdbOneYear.UseVisualStyleBackColor = true;
-            // 
-            // cbTazForecastHeader1
-            // 
-            this.cbTazForecastHeader1.AutoSize = true;
-            this.cbTazForecastHeader1.Location = new System.Drawing.Point(643, 514);
-            this.cbTazForecastHeader1.Name = "cbTazForecastHeader1";
-            this.cbTazForecastHeader1.Size = new System.Drawing.Size(61, 17);
-            this.cbTazForecastHeader1.TabIndex = 68;
-            this.cbTazForecastHeader1.Text = "Header";
-            this.cbTazForecastHeader1.UseVisualStyleBackColor = true;
-            // 
-            // btnBrowseTazForecast1
-            // 
-            this.btnBrowseTazForecast1.Location = new System.Drawing.Point(592, 514);
-            this.btnBrowseTazForecast1.Name = "btnBrowseTazForecast1";
-            this.btnBrowseTazForecast1.Size = new System.Drawing.Size(24, 19);
-            this.btnBrowseTazForecast1.TabIndex = 67;
-            this.btnBrowseTazForecast1.Text = "....";
-            this.btnBrowseTazForecast1.UseVisualStyleBackColor = true;
-            this.btnBrowseTazForecast1.Click += new System.EventHandler(this.btnBrowseTazForecast1_Click);
             // 
             // txtTazForecastFile1
             // 
-            this.txtTazForecastFile1.Location = new System.Drawing.Point(230, 514);
+            this.txtTazForecastFile1.Location = new System.Drawing.Point(233, 483);
             this.txtTazForecastFile1.Name = "txtTazForecastFile1";
             this.txtTazForecastFile1.Size = new System.Drawing.Size(340, 20);
             this.txtTazForecastFile1.TabIndex = 66;
             // 
-            // label3
+            // lblForecastFile1
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(69, 518);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(125, 13);
-            this.label3.TabIndex = 65;
-            this.label3.Text = "Forecast Year TAZ File 1";
+            this.lblForecastFile1.AutoSize = true;
+            this.lblForecastFile1.Location = new System.Drawing.Point(69, 488);
+            this.lblForecastFile1.Name = "lblForecastFile1";
+            this.lblForecastFile1.Size = new System.Drawing.Size(125, 13);
+            this.lblForecastFile1.TabIndex = 65;
+            this.lblForecastFile1.Text = "Forecast Year TAZ File 1";
             // 
             // FrmInput
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(815, 890);
-            this.Controls.Add(this.cbTazForecastHeader1);
-            this.Controls.Add(this.btnBrowseTazForecast1);
             this.Controls.Add(this.txtTazForecastFile1);
-            this.Controls.Add(this.label3);
+            this.Controls.Add(this.lblForecastFile1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbReadXml);
             this.Controls.Add(this.groupBox2);
@@ -711,7 +741,7 @@
         private System.Windows.Forms.Label lblTaz;
         private System.Windows.Forms.TextBox txtTazFile;
         private System.Windows.Forms.CheckedListBox clbEmplCats;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblSelectEmplCats;
         private System.Windows.Forms.Button btnBrowseTaz;
         private System.Windows.Forms.GroupBox gbInputs;
         private System.Windows.Forms.Button btnEmplCatsOk;
@@ -722,7 +752,7 @@
         private System.Windows.Forms.CheckBox cbSchoolHeader;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button btnOutputForm;
-        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label lblEmplClassSys;
         private System.Windows.Forms.RadioButton rdbSic;
         private System.Windows.Forms.RadioButton rdbNaics;
         private System.Windows.Forms.GroupBox gbReadXml;
@@ -751,7 +781,7 @@
         private System.Windows.Forms.CheckBox cbTazForecastHeader1;
         private System.Windows.Forms.Button btnBrowseTazForecast1;
         private System.Windows.Forms.TextBox txtTazForecastFile1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblForecastFile1;
 
     }
 }

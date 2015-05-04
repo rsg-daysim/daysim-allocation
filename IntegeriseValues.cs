@@ -8,8 +8,8 @@ namespace DisaggregationTool
 {
     class IntegeriseValues
     {
-        public static void Calculate(out int[,] lUse_P_round, out int[,] k12Enroll_P_round, out int[] hiEduc_P_round, int[] hh_P, double[] gq_P, double[,] lUse_P, 
-            double[,] k12Enroll_P, double[] hiEduc_P, long[,] parcelVacantCorrespondence, int numLUseVars_P)
+        public static void Calculate(out int[,] lUse_P_round, out int[,] k12Enroll_P_round, out int[] hiEduc_P_round, int[] hh_P, double[] gq_P, double[,] lUse_P,
+            double[,] k12Enroll_P, double[] hiEduc_P, long[,] parcelVacantCorrespondence, int numLUseVars_P, string outFolder)
         {
             // bucket rounding
             int numParcel = lUse_P.GetLength(0);
@@ -30,7 +30,7 @@ namespace DisaggregationTool
             double[] hiEducTaz = new double[3000];
             double[] test = new double[3000];
 
-            string outputFileName = "C:\\Projects\\FDOT Allocation Tool\\inputs\\Input Data\\ForecastTaz_Round.csv";
+            string outputFileName = outFolder + "\\ForecastTaz_Round.csv";
             StreamWriter sw = new StreamWriter(File.Create(outputFileName));
             string header = "TAZ,stugrd,stuhgh,stuuni,leftover";
             sw.Write(header);

@@ -84,9 +84,9 @@ namespace DisaggregationTool
         private static int[,] _parcelDriCorrespondence;
         private static long[,] _parcelVacantCorrespondence;
         private static double[] _gqPop_p_base;
-
-        private static Dictionary<long, int> _tazParcelDictionary;
-        private static Dictionary<long, int> _parcelDriDictionary;
+        private static long[] _parcelSortByTaz;
+        private static int[] _parcelToTazId;
+        private static int[] _parcelLUType;
 
         // ---------------------------------------------------------------------------
 
@@ -179,10 +179,9 @@ namespace DisaggregationTool
                     // Read input data
                     ReadTazFile(TazFileName);
 
-                    //SaveXmlFile();
-
                     // Get input Naics Codes
                     if (!ReadFromXml) GetNaicsCodes(); // if not read from xml - find a better way to identify
+                    else GetEmploymentClassificationType(); // Get empl classification: NAICS or SIC
 
                     // check if NAICS codes are selected correctly - for the case when the user might dispose the form
                     string inputError = ValidateEmploymentCodes.Validate(NumEmplCats, NaicsCodes, EmplClassType);
@@ -196,12 +195,13 @@ namespace DisaggregationTool
                     // Get DaySim employment categories
                     if (OutNumEmplCats == 0) GetInputsForOutput(); // if not read from xml
 
-                    SaveXmlFile();
+                    // get the output folder
+
+                    SaveXmlFile(Path.GetDirectoryName(OutputFileName));
 
                     ReadBlockFile(BlockFileName);
                     ReadMZFile(MzFileName);
                     ReadSchoolFile(SchoolFileName);
-
 
                     // check if NAICS codes are selected correctly - for the case when the user might dispose the form
                     string outputError = ValidateEmploymentCodes.Validate(OutNumEmplCats, OutEmplCatsNaics, "NAICS");
@@ -212,19 +212,11 @@ namespace DisaggregationTool
                         return;
                     }
 
-                    //SaveXmlFile();
-
                     // Perform calculations
                     PerformOneYearCalculations();
                 }
                 else
                 {
-                    //disable other inputs
-                    btnBrowseBlocks.Enabled = false;
-                    btnBrowseMZ.Enabled = false;
-                    btnBrowseTaz.Enabled = false;
-                    btnBrowseSchool.Enabled = false;
-                    btnBrowseOutput.Enabled = false;
 
                     //TAZ allocation tool
                     ReadSectorCorrespondenceFile(SectorCorrespondenceFileName);
@@ -523,9 +515,12 @@ namespace DisaggregationTool
             FileInfo fileFormat = new FileInfo(fileName);
             string extension = fileFormat.Extension;
 
-            ParcelDriCorrespondence = new int[NumParcel, 4];
+            ParcelDriCorrespondence = new int[NumParcel, 5];
             ParcelVacantCorrespondence = new Int64[NumParcel, 5];
             GQPop_P_Base = new double[NumParcel];
+            ParcelSortByTaz = new long[NumParcel];
+            ParcelToTazId = new int[NumParcel];
+            ParcelLUType = new int[NumParcel];
 
             // use streamreader to read the file
             StreamReader file = new StreamReader(fileName);
@@ -547,17 +542,22 @@ namespace DisaggregationTool
                     ParcelDriCorrespondence[parcelid - 1, 0] = Convert.ToInt32(split[0]); //taz2010
                     ParcelDriCorrespondence[parcelid - 1, 1] = Convert.ToInt32(split[1]); //dri
                     ParcelDriCorrespondence[parcelid - 1, 2] = Convert.ToInt32(split[2]); //dri_flag
-                    ParcelDriCorrespondence[parcelid - 1, 3] = Convert.ToInt32(split[4]); //dor_desc
+                    ParcelDriCorrespondence[parcelid - 1, 3] = Convert.ToInt32(split[4]); //vacant_res
                     //ParcelDriCorrespondence[parcelid - 1, 4] = Convert.ToInt32(split[6]); //hh_1 - double: don't need to save it, it is used for sorting (done beforehand as of now)
+                    ParcelDriCorrespondence[parcelid - 1, 4] = Convert.ToInt32(split[9]); //LUType
 
                     // for HH allocation - in sorted order, by: taz (ascending), vacant (desending), dri (descending), hh_1(descending)
                     ParcelVacantCorrespondence[i - 1, 0] = parcelid;
                     ParcelVacantCorrespondence[i - 1, 1] = Convert.ToInt32(split[0]); //taz2010
                     ParcelVacantCorrespondence[i - 1, 2] = Convert.ToInt32(split[1]); //dri
                     ParcelVacantCorrespondence[i - 1, 3] = Convert.ToInt32(split[2]); //dri_flag
-                    ParcelVacantCorrespondence[i - 1, 4] = Convert.ToInt32(split[4]); //dor_desc
+                    ParcelVacantCorrespondence[i - 1, 4] = Convert.ToInt32(split[4]); //vacant_res
 
                     GQPop_P_Base[parcelid - 1] = Convert.ToDouble(split[8]); //gq
+
+                    ParcelSortByTaz[i - 1] = parcelid; // stores parcel ids that are sorted by taz
+                    ParcelToTazId[parcelid - 1] = Convert.ToInt32(split[0]); // parcel id is the index
+                    ParcelLUType[parcelid - 1] = Convert.ToInt32(split[9]); //LUType - parcel id is the index
                 }
 
                 //foreach (string column in split)
@@ -710,24 +710,20 @@ namespace DisaggregationTool
             {
                 string[] split = System.Text.RegularExpressions.Regex.Split(line, "\\s+");
 
-                int j = 0;
-
-                foreach (string column in split)
+                if (i > 0)
                 {
-                    if (column == "blockid10")
+                    int j = 0;
+
+                    foreach (string column in split)
                     {
-                        break;
-                    }
-                    else
-                    {
-                        if (j == 0) 
+                        if (j == 0)
                         {
-                            BlockId_B[i-1] = Convert.ToInt64(column);
-                            BlockIndDictionary[BlockId_B[i-1]] = i-1; 
+                            BlockId_B[i - 1] = Convert.ToInt64(column);
+                            BlockIndDictionary[BlockId_B[i - 1]] = i - 1;
                         }
 
-                        else if (j==1) XCoord_B[i-1] = Convert.ToDouble(column);
-                        else if (j==2) YCoord_B[i-1] = Convert.ToDouble(column);
+                        else if (j == 1) XCoord_B[i - 1] = Convert.ToDouble(column);
+                        else if (j == 2) YCoord_B[i - 1] = Convert.ToDouble(column);
                         else if (j == 3) Area_B[i - 1] = Convert.ToDouble(column);
                         else
                         {
@@ -735,8 +731,8 @@ namespace DisaggregationTool
                         }
 
                         j++;
+
                     }
-                    
                 }
 
                 line = file.ReadLine();
@@ -780,15 +776,12 @@ namespace DisaggregationTool
                 string[] split = System.Text.RegularExpressions.Regex.Split(line, "\\s+");
                 //string[] split = System.Text.RegularExpressions.Regex.Split(line, ",");
 
-                int j = 0;
-
-                foreach (string column in split)
+                if (i > 0)
                 {
-                    if (column == "ID")
-                    {
-                        break;
-                    }
-                    else
+
+                    int j = 0;
+
+                    foreach (string column in split)
                     {
                         if (j == 0)
                         {
@@ -805,8 +798,8 @@ namespace DisaggregationTool
                         else if (j == 5) BlockId_M[i - 1] = Convert.ToInt64(column);
 
                         j++;
-                    }
 
+                    }
                 }
 
                 line = file.ReadLine();
@@ -848,15 +841,11 @@ namespace DisaggregationTool
                 string[] split = System.Text.RegularExpressions.Regex.Split(line, "\\s+");
                 //string[] split = System.Text.RegularExpressions.Regex.Split(line, ",");
 
-                int j = 0;
-
-                foreach (string column in split)
+                if (i > 0)
                 {
-                    if (column == "SCHID")
-                    {
-                        break;
-                    }
-                    else
+                    int j = 0;
+
+                    foreach (string column in split)
                     {
                         if (j == 0)
                         {
@@ -869,8 +858,8 @@ namespace DisaggregationTool
                         else if (j > 3 && j < 7) SchEnrl_S[i - 1, j - 4] = Convert.ToInt32(column);
 
                         j++;
-                    }
 
+                    }
                 }
 
                 line = file.ReadLine();
@@ -1007,6 +996,7 @@ namespace DisaggregationTool
             int[] DiffHiEducTaz;
             double[,] SumLUseDri;
             double[] SumAreaDri;
+            double[] SumAreaSchool;
             double[,] ShareLUseDri;
             double[] ShareAreaDri;
             double[] ShareHHTaz;
@@ -1014,6 +1004,7 @@ namespace DisaggregationTool
             double[] ShareK12EnrollTaz;
             double[] ShareHiEducTaz;
             double[] ShareAreaTaz;
+            double[] ShareAreaSchoolTaz;
             double[,] DiffLUseParcel;
             double[,] DiffK12EnrollParcel;
             double[] DiffHiEducParcel;
@@ -1032,56 +1023,84 @@ namespace DisaggregationTool
             double[] DiffGQParcel;
             double[] GQPop_P_Forecast;
             double[] DiffGQTaz;
-            int[] HH_P_Forecast_Round;
+            //int[] HH_P_Forecast_Round;
             int[,] LUse_P_Forecast_Round;
             int[,] K12Enroll_P_Forecast_Round;
             int[] HiEduc_P_Forecast_Round;
+            long[] ParcelSortByArea;
+            int[] ParcelSchoolVacant;
+            int[,] NumVacCommResParcels;
+            int[,] NumVacCommParcels;
+            int[,] NumExisCommParcels;
+            int[,] NumOtherParcels;
+            int[] AvgEnrolSize;
+            double[] AvgEnrolAreaSize;
+            double FractionStugrd;
+            string SortingError;
+            double[] MaxEnrolDensity;
+            double Factor = 1.3;
             
             string OutFolder = Path.GetDirectoryName(ParcelForecastFileName);
 
             //1. Aggregate base parcel data to Taz
             AggregateToTazBase.Aggregate(out HH_T_Base, out GQPop_T_Base, out LUse_T_Base, out K12Enroll_T_Base, out HiEduc_T_Base, out Area_T_Base, out TazIndBaseDictionary,
-                out DUDensity_T_Base, out NumVacantParcelsInTaz, out NumVacantParcelsInDri, out NumParcelsInTaz, ParcelId_P_Base, TazId_P_Base, HH_P_Base, GQPop_P_Base,
-                LUse_P_Base, K12Enroll_P_Base, HiEduc_P_Base, Area_P_Base, NumLUseVars_P_Base, NumTaz, ParcelDriCorrespondence);
+                out DUDensity_T_Base, out NumVacantParcelsInTaz, out NumVacantParcelsInDri, out NumParcelsInTaz, out AvgEnrolSize, out AvgEnrolAreaSize, out FractionStugrd,
+                out MaxEnrolDensity, ParcelId_P_Base, TazId_P_Base, HH_P_Base, GQPop_P_Base,
+                LUse_P_Base, K12Enroll_P_Base, HiEduc_P_Base, Area_P_Base, NumLUseVars_P_Base, NumTaz, ParcelDriCorrespondence, OutFolder);
 
             //2. Calculate TAZ diff by sector
             CalculateTazDiff.Calculate(out DiffHHTaz, out DiffGQTaz, out DiffLUseTaz, out DiffK12EnrollTaz, out DiffHiEducTaz, HH_T_Base, GQPop_T_Base, LUse_T_Base, K12Enroll_T_Base, HiEduc_T_Base,
-                DwellUnits_T_Forecast, GQPop_T_Forecast, LUse_T_Forecast, K12Enroll_T_Forecast, HiEduc_T_Forecast, TazIndBaseDictionary, TazIndForecastDictionary, NumLUseVars_P_Base, NumTaz);
+                DwellUnits_T_Forecast, GQPop_T_Forecast, LUse_T_Forecast, K12Enroll_T_Forecast, HiEduc_T_Forecast, TazIndBaseDictionary, TazIndForecastDictionary, NumLUseVars_P_Base, NumTaz,
+                OutFolder);
 
             //3. Calculate sum at DRI level
-            CalculateSum.Calculate(out SumLUseDri, out SumAreaDri, ParcelDriCorrespondence, NumTaz, NumLUseVars_P_Base, 
-                LUse_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary);
+            CalculateSum.Calculate(out SumLUseDri, out SumAreaDri, out SumAreaSchool, ParcelDriCorrespondence, NumTaz, NumLUseVars_P_Base,
+                LUse_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary, OutFolder);
 
             //4. Calculate share for parcels in DRI
             SharesForParcelsInDri.Calculate(out ShareLUseDri, out ShareAreaDri, ParcelDriCorrespondence, NumTaz, NumLUseVars_P_Base,
                 LUse_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary, SumLUseDri, SumAreaDri);
 
             //5. Calculate shares for parcels in TAZ
-            SharesForParcelsInTaz.Calculate(out ShareHHTaz, out ShareGQTaz, out ShareLUseTaz, out ShareK12EnrollTaz, out ShareHiEducTaz, out ShareAreaTaz, NumTaz, NumLUseVars_P_Base,
-                HH_P_Base, GQPop_P_Base, LUse_P_Base, K12Enroll_P_Base, HiEduc_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary, HH_T_Base, GQPop_T_Base, LUse_T_Base, 
-                K12Enroll_T_Base, HiEduc_T_Base, Area_T_Base);
+            SharesForParcelsInTaz.Calculate(out ShareHHTaz, out ShareGQTaz, out ShareLUseTaz, out ShareK12EnrollTaz, out ShareHiEducTaz, out ShareAreaTaz, out ShareAreaSchoolTaz,
+                out ParcelSchoolVacant, out NumVacCommResParcels, out NumVacCommParcels, out NumExisCommParcels, out NumOtherParcels, 
+                NumTaz, NumLUseVars_P_Base,
+                HH_P_Base, GQPop_P_Base, LUse_P_Base, K12Enroll_P_Base, HiEduc_P_Base, Area_P_Base, TazId_P_Base, TazIndBaseDictionary, HH_T_Base, GQPop_T_Base, LUse_T_Base,
+                K12Enroll_T_Base, HiEduc_T_Base, Area_T_Base, SumAreaSchool, ParcelLUType, AvgEnrolAreaSize, OutFolder, MaxEnrolDensity, AvgEnrolSize, Factor);
 
+            // 5.1 sort parcels by area - descendingly
+            SortParcels.Sort(out ParcelSortByArea, out SortingError, ParcelSortByTaz, ParcelToTazId, Area_P_Base, "D", OutFolder);
+
+            // if there is a sorting error 
+            if (SortingError != "")
+            {
+                MessageBox.Show(SortingError);
+                Application.Exit();
+            }
+            
             //6. Calculate change for parcels
-            CalculateParcelDiff.Calculate(out DiffGQParcel, out DiffLUseParcel, out DiffK12EnrollParcel, out DiffHiEducParcel, GQPop_P_Base, LUse_P_Base, K12Enroll_P_Base, HiEduc_P_Base, 
-                NumLUseVars_P_Base, TazId_P_Base, TazIndForecastDictionary, SumLUseDri, SumAreaDri, GQPop_T_Base,
-                LUse_T_Base, K12Enroll_T_Base, HiEduc_T_Base,  Area_T_Base, ShareLUseDri, ShareAreaDri, ShareGQTaz, ShareLUseTaz, ShareK12EnrollTaz, ShareHiEducTaz,
-                ShareAreaTaz, DiffGQTaz, DiffLUseTaz, DiffK12EnrollTaz, DiffHiEducTaz);
+            CalculateParcelDiff.Calculate(out DiffGQParcel, out DiffLUseParcel, LUse_P_Base,NumLUseVars_P_Base, TazId_P_Base, SumLUseDri, SumAreaDri, GQPop_T_Base,
+                LUse_T_Base, Area_T_Base, ShareLUseDri, ShareGQTaz, ShareLUseTaz, ShareAreaTaz, DiffGQTaz, DiffLUseTaz);
 
-            //7. Allocate change to parcels
-            AllocateChangeToParcels.Allocate(out GQPop_P_Forecast, out LUse_P_Forecast, out K12Enroll_P_Forecast, out HiEduc_P_Forecast, GQPop_P_Base, LUse_P_Base, K12Enroll_P_Base, 
-                HiEduc_P_Base, K12Enroll_T_Forecast, HiEduc_T_Forecast, DiffGQParcel, DiffLUseParcel, DiffK12EnrollParcel,
-                DiffHiEducParcel, NumLUseVars_P_Base, ShareK12EnrollTaz, ShareHiEducTaz, TazId_P_Base);
+            //7. Allocate LUse change to parcels
+            AllocateChangeToParcels.AllocateLUse(out GQPop_P_Forecast, out LUse_P_Forecast, GQPop_P_Base, LUse_P_Base, DiffGQParcel, DiffLUseParcel, NumLUseVars_P_Base,
+                TazId_P_Base);
 
             //7.1 Allocate HH change to parcels
             AllocateChangeToParcels.AllocateHH(out HH_P_Forecast,DiffHHTaz, HH_P_Base, DUDensity_T_Base, NumVacantParcelsInTaz, NumVacantParcelsInDri,
-                NumParcelsInTaz, ParcelVacantCorrespondence, TazId_P_Base,ShareHHTaz);
+                NumParcelsInTaz, ParcelVacantCorrespondence, TazId_P_Base, ShareHHTaz, OutFolder);
+
+            // 7.2 Allocate enrollment change to parcels
+            AllocateChangeToParcels.AllocateEnrollment(out K12Enroll_P_Forecast, out HiEduc_P_Forecast, ParcelSortByArea, K12Enroll_P_Base, HiEduc_P_Base, K12Enroll_T_Base, HiEduc_T_Base,
+                LUse_T_Base, ShareAreaSchoolTaz, Area_P_Base, ShareK12EnrollTaz, ShareHiEducTaz, DiffK12EnrollTaz, DiffHiEducTaz, ParcelLUType, TazId_P_Base, FractionStugrd, ParcelSchoolVacant, AvgEnrolSize,
+                AvgEnrolAreaSize, NumVacCommResParcels, NumVacCommParcels, NumExisCommParcels, NumOtherParcels, OutFolder, MaxEnrolDensity, Factor);
 
             // 8.0 Intergerize values
             IntegeriseValues.Calculate(out LUse_P_Forecast_Round, out K12Enroll_P_Forecast_Round, out HiEduc_P_Forecast_Round, HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast,
-                K12Enroll_P_Forecast, HiEduc_P_Forecast, ParcelVacantCorrespondence, NumLUseVars_P_Base);
+                K12Enroll_P_Forecast, HiEduc_P_Forecast, ParcelVacantCorrespondence, NumLUseVars_P_Base, OutFolder);
 
             //8. Write output
-            WriteMultiYearOutput.Write(HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast_Round, K12Enroll_P_Forecast_Round, HiEduc_P_Forecast_Round, ParcelId_P_Base, XCoord_P_Base, YCoord_P_Base, 
+            WriteMultiYearOutput.Write(HH_P_Forecast, GQPop_P_Forecast, LUse_P_Forecast_Round, K12Enroll_P_Forecast_Round, HiEduc_P_Forecast_Round, ParcelId_P_Base, XCoord_P_Base, YCoord_P_Base,
                 Area_P_Base, TazId_P_Base, ParcelForecastFileName, ParcelDriCorrespondence);
 
         }
@@ -1188,10 +1207,10 @@ namespace DisaggregationTool
         //}
 
  
-        private void SaveXmlFile()
+        private void SaveXmlFile(string outpath)
         {
             // Make a seperate class
-            XmlTextWriter xWriter = new XmlTextWriter("C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\inputs.xml", Encoding.UTF8);
+            XmlTextWriter xWriter = new XmlTextWriter(outpath+"\\inputs.xml", Encoding.UTF8);
             xWriter.Formatting = Formatting.Indented;
 
             xWriter.WriteStartElement("DisaggregationTool"); // <Disaggregation Tool>
@@ -1426,7 +1445,7 @@ namespace DisaggregationTool
         {
             OpenFileDialog openTazInputFileDialog = new OpenFileDialog();
 
-            openTazInputFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+            openTazInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openTazInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             //openTazInputFileDialog.FileName = "TAZ_rochester.txt";
             openTazInputFileDialog.Title = "Open TAZ File";
@@ -1444,13 +1463,14 @@ namespace DisaggregationTool
                 DisplayTazFields(TazFileName);
             }
 
+
         }
 
         private void btnBrowseBlocks_Click(object sender, EventArgs e)
         {
             OpenFileDialog openBlockInputFileDialog = new OpenFileDialog();
 
-            openBlockInputFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+            openBlockInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openBlockInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             //openBlockInputFileDialog.FileName = "BLOCKS_SE_rochester.dat";
             openBlockInputFileDialog.FilterIndex = 2;
@@ -1468,7 +1488,7 @@ namespace DisaggregationTool
         {
             OpenFileDialog openMZInputFileDialog = new OpenFileDialog();
 
-            openMZInputFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+            openMZInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openMZInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             //openMZInputFileDialog.FileName = "MZ_rochester.txt";
             openMZInputFileDialog.FilterIndex = 2;
@@ -1486,7 +1506,7 @@ namespace DisaggregationTool
         {
             OpenFileDialog openSchoolInputFileDialog = new OpenFileDialog();
 
-            openSchoolInputFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+            openSchoolInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openSchoolInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             //openSchoolInputFileDialog.FileName = "Schools_rochester.txt";
             openSchoolInputFileDialog.FilterIndex = 2;
@@ -1504,9 +1524,10 @@ namespace DisaggregationTool
         {
             OpenFileDialog openTazForecastInputFileDialog = new OpenFileDialog();
 
-            openTazForecastInputFileDialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\InputData\\";
+            openTazForecastInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openTazForecastInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             openTazForecastInputFileDialog.FileName = "ZDATA2_9E_40A.csv";
+            openTazForecastInputFileDialog.Title = "Input alternate year TAZ level household and employment controls";
             openTazForecastInputFileDialog.FilterIndex = 2;
             openTazForecastInputFileDialog.RestoreDirectory = true;
 
@@ -1523,9 +1544,10 @@ namespace DisaggregationTool
         {
             OpenFileDialog openTazForecastInputFile1Dialog = new OpenFileDialog();
 
-            openTazForecastInputFile1Dialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\InputData\\";
+            openTazForecastInputFile1Dialog.InitialDirectory = Directory.GetCurrentDirectory();
             openTazForecastInputFile1Dialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             openTazForecastInputFile1Dialog.FileName = "ZDATA1_40A.csv";
+            openTazForecastInputFile1Dialog.Title = "Input alternate year TAZ level enrollment controls";
             openTazForecastInputFile1Dialog.FilterIndex = 2;
             openTazForecastInputFile1Dialog.RestoreDirectory = true;
 
@@ -1542,9 +1564,10 @@ namespace DisaggregationTool
         {
             OpenFileDialog openParcelBaseInputFileDialog = new OpenFileDialog();
 
-            openParcelBaseInputFileDialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\InputData\\";
+            openParcelBaseInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openParcelBaseInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             openParcelBaseInputFileDialog.FileName = "Tampa_buffparcel_logdecay_allstreets.dat";
+            openParcelBaseInputFileDialog.Title = "Input base year parcel file";
             openParcelBaseInputFileDialog.FilterIndex = 2;
             openParcelBaseInputFileDialog.RestoreDirectory = true;
 
@@ -1560,9 +1583,10 @@ namespace DisaggregationTool
         {
             OpenFileDialog openCorrespondenceInputFileDialog = new OpenFileDialog();
 
-            openCorrespondenceInputFileDialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\Input Data\\";
+            openCorrespondenceInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openCorrespondenceInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
-            openCorrespondenceInputFileDialog.FileName = "Parcel_DRI_TAZ_DESC_HH1_GQ_Sorted.csv";
+            openCorrespondenceInputFileDialog.FileName = "Parcel_DRI_TAZ_DESC_HH1_GQ_Sorted_New.csv";
+            openCorrespondenceInputFileDialog.Title = "Input parcel correspondence file";
             openCorrespondenceInputFileDialog.FilterIndex = 2;
             openCorrespondenceInputFileDialog.RestoreDirectory = true;
 
@@ -1578,9 +1602,10 @@ namespace DisaggregationTool
         {
             OpenFileDialog openSetctorCorrespondenceInputFileDialog = new OpenFileDialog();
 
-            openSetctorCorrespondenceInputFileDialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\Input Data\\";
+            openSetctorCorrespondenceInputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             openSetctorCorrespondenceInputFileDialog.Filter = "dat files (*.dat)|*.dat|All files (*.*)|*.*";
             openSetctorCorrespondenceInputFileDialog.FileName = "TazSectorToDaysimSectorCorrespondence.csv";
+            openSetctorCorrespondenceInputFileDialog.Title = "Input sector correspondence file";
             openSetctorCorrespondenceInputFileDialog.FilterIndex = 2;
             openSetctorCorrespondenceInputFileDialog.RestoreDirectory = true;
 
@@ -1599,7 +1624,7 @@ namespace DisaggregationTool
 
             SaveFileDialog saveOutputFileDialog = new SaveFileDialog();
 
-            saveOutputFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+            saveOutputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             saveOutputFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
             //saveOutputFileDialog.FileName = "mzOutput";
             saveOutputFileDialog.Title = "Save Micro Zone Output";
@@ -1617,9 +1642,9 @@ namespace DisaggregationTool
 
             SaveFileDialog saveOutputFileDialog = new SaveFileDialog();
 
-            saveOutputFileDialog.InitialDirectory = "C:\\Projects\\FDOT Allocation Tool\\inputs\\Input Data\\";
+            saveOutputFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
             saveOutputFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*";
-            saveOutputFileDialog.FileName = "parcelOutput_enroll";
+            saveOutputFileDialog.FileName = "parcelOutput_Forecast";
             saveOutputFileDialog.Title = "Save Future Year Parcel Output";
             saveOutputFileDialog.RestoreDirectory = true;
 
@@ -1677,7 +1702,7 @@ namespace DisaggregationTool
             try
             {
                 OpenFileDialog openXMLFileDialog = new OpenFileDialog();
-                openXMLFileDialog.InitialDirectory = "C:\\Projects\\STEP Transferability\\Tools\\DisaggregationTool\\Run\\";
+                openXMLFileDialog.InitialDirectory = Directory.GetCurrentDirectory();
                 openXMLFileDialog.Filter = "XML files (*.xml)|*.xml";
                 //openXMLFileDialog.FileName = "inputs_rochester";
                 openXMLFileDialog.RestoreDirectory = true;
@@ -2088,18 +2113,6 @@ namespace DisaggregationTool
             set { _area_p_forecast = value; }
         }
 
-        public Dictionary<long, int> TazParcelDictionary
-        {
-            get { return _tazParcelDictionary; }
-            set { _tazParcelDictionary = value; }
-        }
-
-        public Dictionary<long, int> ParcelDriDictionary
-        {
-            get { return _parcelDriDictionary; }
-            set { _parcelDriDictionary = value; }
-        }
-
         public int[] TazId_T_Forecast
         {
             get { return _tazid_t_forecast; }
@@ -2246,6 +2259,149 @@ namespace DisaggregationTool
             set { _gqPop_p_base = value; }
         }
 
+        public long[] ParcelSortByTaz
+        {
+            get { return _parcelSortByTaz; }
+            set { _parcelSortByTaz = value; }
+        }
 
+        public int[] ParcelToTazId
+        {
+            get { return _parcelToTazId; }
+            set { _parcelToTazId = value; }
+        }
+
+        public int[] ParcelLUType
+        {
+            get { return _parcelLUType; }
+            set { _parcelLUType = value; }
+        }
+
+        private void rdbMultiYears_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdbMultiYears.Checked == true)
+            {
+                //enable multi year related inputs
+                lblDriCorrespondenceFile.Enabled = true;
+                lblParcelBaseFile.Enabled = true;
+                lblParcelForecastFile.Enabled = true;
+                lblSectorCorrespondenceFile.Enabled = true;
+                lblTazForecastFile.Enabled = true;
+                lblForecastFile1.Enabled = true;
+
+                txtDriCorrespondenceFile.Enabled = true;
+                txtParcelBaseFile.Enabled = true;
+                txtParcelForecastFile.Enabled = true;
+                txtSectorCorrespondenceFile.Enabled = true;
+                txtTazForecastFile.Enabled = true;
+                txtTazForecastFile1.Enabled = true;
+
+                btnBrowseCorrespondence.Enabled = true;
+                btnBrowseParcelBase.Enabled = true;
+                btnBrowseParcelForecast.Enabled = true;
+                btnBrowseSectorCorrespondence.Enabled = true;
+                btnBrowseTazForecast.Enabled = true;
+                btnBrowseTazForecast1.Enabled = true;
+
+                cbCorrespondenceHeader.Enabled = true;
+                cbParcelBaseHeader.Enabled = true;
+                cbSectorCorrespondenceHeader.Enabled = true;
+                cbTazForecastHeader.Enabled = true;
+                cbTazForecastHeader1.Enabled = true;
+
+                //disable one year related inputs
+                txtTazFile.Enabled = false;
+                txtMzFile.Enabled = false;
+                txtBlockFile.Enabled = false;
+                txtSchoolFile.Enabled = false;
+                txtOutputFile.Enabled = false;
+                btnBrowseBlocks.Enabled = false;
+                btnBrowseMZ.Enabled = false;
+                btnBrowseTaz.Enabled = false;
+                btnBrowseSchool.Enabled = false;
+                btnBrowseOutput.Enabled = false;
+                clbEmplCats.Enabled = false;
+                clbEmplCats.BackColor = System.Drawing.SystemColors.Menu;
+                rdbNaics.Enabled = false;
+                rdbSic.Enabled = false;
+                btnOutputForm.Enabled = false;
+                btnReadXml.Enabled = false;
+                lblBlock.Enabled = false;
+                lblMZ.Enabled = false;
+                lblTaz.Enabled = false;
+                lblSchool.Enabled = false;
+                lblSelectEmplCats.Enabled = false;
+                lblEmplClassSys.Enabled = false;
+                lblOutput.Enabled = false;
+                gbReadXml.Enabled = false;
+                cbBlockHeader.Enabled = false;
+                cbMZHeader.Enabled = false;
+                cbSchoolHeader.Enabled = false;
+                cbTazHeader.Enabled = false;
+            }
+            else
+            {
+                //enable one year related inputs
+                txtTazFile.Enabled = true;
+                txtMzFile.Enabled = true;
+                txtBlockFile.Enabled = true;
+                txtSchoolFile.Enabled = true;
+                txtOutputFile.Enabled = true;
+                btnBrowseBlocks.Enabled = true;
+                btnBrowseMZ.Enabled = true;
+                btnBrowseTaz.Enabled = true;
+                btnBrowseSchool.Enabled = true;
+                btnBrowseOutput.Enabled = true;
+                clbEmplCats.Enabled = true;
+                clbEmplCats.BackColor = System.Drawing.SystemColors.Window;
+                rdbNaics.Enabled = true;
+                rdbSic.Enabled = true;
+                btnOutputForm.Enabled = true;
+                btnReadXml.Enabled = true;
+                lblBlock.Enabled = true;
+                lblMZ.Enabled = true;
+                lblTaz.Enabled = true;
+                lblSchool.Enabled = true;
+                lblSelectEmplCats.Enabled = true;
+                lblEmplClassSys.Enabled = true;
+                lblOutput.Enabled = true;
+                gbReadXml.Enabled = true;
+                cbBlockHeader.Enabled = true;
+                cbMZHeader.Enabled = true;
+                cbSchoolHeader.Enabled = true;
+                cbTazHeader.Enabled = false;
+
+                //disable multi year related inputs
+                lblDriCorrespondenceFile.Enabled = false;
+                lblParcelBaseFile.Enabled = false;
+                lblParcelForecastFile.Enabled = false;
+                lblSectorCorrespondenceFile.Enabled = false;
+                lblTazForecastFile.Enabled = false;
+                lblForecastFile1.Enabled = false;
+
+                txtDriCorrespondenceFile.Enabled = false;
+                txtParcelBaseFile.Enabled = false;
+                txtParcelForecastFile.Enabled = false;
+                txtSectorCorrespondenceFile.Enabled = false;
+                txtTazForecastFile.Enabled = false;
+                txtTazForecastFile1.Enabled = false;
+
+                btnBrowseCorrespondence.Enabled = false;
+                btnBrowseParcelBase.Enabled = false;
+                btnBrowseParcelForecast.Enabled = false;
+                btnBrowseSectorCorrespondence.Enabled = false;
+                btnBrowseTazForecast.Enabled = false;
+                btnBrowseTazForecast1.Enabled = false;
+
+                cbCorrespondenceHeader.Enabled = false;
+                cbParcelBaseHeader.Enabled = false;
+                cbSectorCorrespondenceHeader.Enabled = false;
+                cbTazForecastHeader.Enabled = false;
+                cbTazForecastHeader1.Enabled = false;
+
+            }
+        }
+
+        
     }
 }
